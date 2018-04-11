@@ -2,11 +2,11 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import time from '../public/timg.jpg';
 
-const ListBooks = ({ books }) => {
+const ListBooks = ({ books, onChangeSelect }) => {
 	// 监听select
-	const handleChange = ({ value, key, item }) => {
-		if(this.props.onChangeSelect){
-			this.props.onChangeSelect(value, key, item)
+	const handleChange = (value, key, item) => {
+		if(onChangeSelect){
+			onChangeSelect(value, key, item)
 		}
 	}
 

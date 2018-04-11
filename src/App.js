@@ -34,26 +34,28 @@ class BooksApp extends Component {
   // 下拉选项切换书籍栏目
   changeSelect(shelf, key, item) { 
     BooksAPI.update(item, shelf).then((book) => {
-      const { books, searchList} = this.state
-      item.shelf = shelf;
-      // 不为书籍 shelf 不为 none 时代表添加到列表
-      if(shelf !== 'none'){
-        books[shelf] = books[shelf].concat([ item ])
-      }
-      // 判断 key 的 typeof, 
-      // 如果值为 number 从搜索列表删除当前已切换阅读栏目的书籍，
-      // 如果值为 string 书籍列表切换
-      if(typeof key === 'number'){
-        searchList.splice(key,1)
-        this.setState((state) => ({
-          searchList: searchList
-        }))
-      }else if(typeof key === 'string'){
-        books[key] = books[key].filter((book) => item.id !== book.id)
-      }
-      this.setState((state) => ({
-        books: books
-      }))
+      this.setState((state) => {
+        const { books, searchList} = this.state
+        item.shelf = shelf;
+        // 不为书籍 shelf 不为 none 时代表添加到列表
+        if(shelf !== 'none'){
+          books[shelf] = books[shelf].concat([ item ])
+        }
+        // 判断 key 的 typeof, 
+        // 如果值为 number 从搜索列表删除当前已切换阅读栏目的书籍，
+        // 如果值为 string 书籍列表切换
+        if(typeof key === 'number'){
+          searchList.splice(key,1)
+          this.setState((state) => ({
+            searchList: searchList
+          }))
+        }else if(typeof key === 'string'){
+          books[key] = books[key].filter((book) => item.id !== book.id)
+        }
+        return {
+          books: books
+        }
+      })
     })
   }
 
