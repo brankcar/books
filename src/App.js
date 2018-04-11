@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom'
 import ListBooks from './ListBooks'
 import SearchBooks from './SearchBooks'
 import * as BooksAPI from './BooksAPI'
+import * as _ from 'lodash'
 import './App.css'
 
 class BooksApp extends Component {
@@ -57,24 +58,47 @@ class BooksApp extends Component {
   }
 
   // 搜索书籍
-  searchBooks(query) {
+  searchBooks = _.debounce((query) => {
     if(query){
       BooksAPI.search(query).then((list) => {
-        this.setState({
-          searchList: list.map((book) => {
-            if(!book.shelf){
-              book.shelf = 'none'
+        if(Array.isArray(list)){
+          this.setState((state) => {
+            let books = Object.values(state.books)
+            let booksList = []
+            for(let i = 0; i < books.length; i++){
+              // 解构
+              booksList = [...booksList, ...books[i]]
             }
-            return book
+
+            books = booksList
+
+            const newSearchList = list.map((book) => {
+              // 如果该图书在书架中，会返回该图书，否则返回 undefined
+              const searchListInshelfBook = books.find(
+                shelfBook => shelfBook.id === book.id
+              )
+              // 同步 shelf 值，并返回该新的图书对象
+              return {
+                ...book,
+                shelf: searchListInshelfBook ? searchListInshelfBook.shelf : 'none'
+              }
+            })
+            return {
+              searchList: newSearchList
+            }
           })
-        })
+        }else{
+          this.setState({
+            searchList: []
+          })
+        }
       })
     }else{
       this.setState({
         searchList: []
       })
     }
-  }
+  }, 400)
 
   render() {
     return (

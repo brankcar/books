@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import time from '../public/timg.jpg';
 
 class SearchBooks extends Component {
 	state = {
@@ -47,10 +48,10 @@ class SearchBooks extends Component {
       			  <li key={book.id}>
                     <div className="book">
                       <div className="book-top">
-                        <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.canonicalVolumeLink})` }}></div>
+                        <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks ? book.imageLinks.thumbnail : time})` }}></div>
                         <div className="book-shelf-changer">
                           <select value={book.shelf} onChange={(event) => this.handleChange(event.target.value, index, book)}>
-                            <option value="none" disabled>Move to...</option>
+                            <option value="disabled" disabled>Move to...</option>
                             <option value="currentlyReading">Currently Reading</option>
                             <option value="wantToRead">Want to Read</option>
                             <option value="read">Read</option>
@@ -58,7 +59,10 @@ class SearchBooks extends Component {
                           </select>
                         </div>
                       </div>
-                      <div className="book-title">{book.title}</div>
+                      <div className="book-title">{book.title || '暂无书名'}</div>
+                      {!book.authors && (
+                      	<div className="book-authors">佚名</div>
+                  	  )}
                       {book.authors && book.authors.map((authors) => (
                       	<div className="book-authors" key={authors}>{authors}</div>
                   	  ))}
